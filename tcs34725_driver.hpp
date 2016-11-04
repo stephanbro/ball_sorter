@@ -25,9 +25,9 @@ class TCS34725
     static const uint8_t rgb_color[COLOR_MAX][3];
     static const char* rgb_string[COLOR_MAX+1];
 
-    uint8_t  (*i2c_read8_cb)(uint8_t, uint8_t);
-    uint16_t (*i2c_read16_cb)(uint8_t, uint8_t);
-    void     (*i2c_write8_cb)(uint8_t, uint8_t, uint8_t);
+    uint8_t  (*read8_cb)(uint8_t, uint8_t);
+    uint16_t (*read16_cb)(uint8_t, uint8_t);
+    void     (*write8_cb)(uint8_t, uint8_t, uint8_t);
 
   private:
     uint8_t  read8(uint8_t reg);

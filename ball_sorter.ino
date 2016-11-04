@@ -63,9 +63,9 @@ void setup()
 
   // Setup debug console over usb
   Serial.begin(115200);
-  g_tcs34725.i2c_read8_cb  = i2c_read8;
-  g_tcs34725.i2c_read16_cb = i2c_read16;
-  g_tcs34725.i2c_write8_cb = i2c_write8;
+  g_tcs34725.read8_cb  = i2c_read8;
+  g_tcs34725.read16_cb = i2c_read16;
+  g_tcs34725.write8_cb = i2c_write8;
   g_tcs34725.init();
   g_tcs34725.enable();
 

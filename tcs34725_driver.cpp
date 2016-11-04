@@ -125,16 +125,16 @@ TCS34725::color_t TCS34725::get_color(void)
 
 uint8_t  TCS34725::read8(uint8_t reg)
 {
-  return i2c_read8_cb(TCS34725_ADDRESS, TCS34725_COMMAND_BIT | reg);
+  return read8_cb(TCS34725_ADDRESS, TCS34725_COMMAND_BIT | reg);
 }
 uint16_t TCS34725::read16(uint8_t reg)
 {
-  return i2c_read16_cb(TCS34725_ADDRESS, TCS34725_COMMAND_BIT | reg);
+  return read16_cb(TCS34725_ADDRESS, TCS34725_COMMAND_BIT | reg);
 }
 
 void     TCS34725::write8(uint8_t reg, uint8_t val)
 {
-  i2c_write8_cb(TCS34725_ADDRESS, TCS34725_COMMAND_BIT | reg, val);
+  write8_cb(TCS34725_ADDRESS, TCS34725_COMMAND_BIT | reg, val);
 }
 
 const uint8_t TCS34725::rgb_color[COLOR_MAX][3] = {
