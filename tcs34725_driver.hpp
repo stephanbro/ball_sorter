@@ -1,26 +1,21 @@
+#include "color_iface.hpp"
+
 // Sensor class
-class TCS34725
+class TCS34725 : public colorIface
 {
   public:
     TCS34725();  // Constructor
     ~TCS34725(); // Destructor
 
-    void init(void);
+    virtual void init(void);
 
-    void enable(void);
+    virtual void enable(void);
 
-    void disable(void);
+    virtual void disable(void);
 
     void update_color_values(void);
 
-    typedef enum COLOR {
-      BLACK, WHITE, RED, LIME, BLUE, YELLOW,
-      CYAN, MAGENTA, SILVER, GRAY, MAROON, OLIIVE,
-      GREEN, PURPLE, TEAL, NAVY, ORANGE,
-      COLOR_MAX
-    } color_t;
-
-    color_t get_color(void);
+    virtual color_t get_color(void);
 
     static const uint8_t rgb_color[COLOR_MAX][3];
     static const char* rgb_string[COLOR_MAX+1];

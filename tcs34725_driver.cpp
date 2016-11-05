@@ -50,6 +50,7 @@ void TCS34725::init(void)
   }
   uint8_t val = read8(TCS34725_RA_WIA);
   m_is_inited = (val == 0x44);
+  enable();
 }
 
 void TCS34725::enable(void)
@@ -96,13 +97,6 @@ void TCS34725::update_color_values(void)
   m_green_last = (uint8_t)(((float)grn / (float)m_rgb_max)*255);
 }
 
-typedef enum COLOR {
-  BLACK, WHITE, RED, LIME, BLUE, YELLOW,
-  CYAN, MAGENTA, SILVER, GRAY, MAROON, OLIIVE,
-  GREEN, PURPLE, TEAL, NAVY, ORANGE,
-  COLOR_MAX
-} color_t;
-
 TCS34725::color_t TCS34725::get_color(void)
 {
   if (m_clear_last < 2000) {
@@ -112,9 +106,9 @@ TCS34725::color_t TCS34725::get_color(void)
   color_t ret = COLOR_MAX;
   uint16_t d  = 65535;
   for (uint8_t i = 0; i < COLOR_MAX; i++) {
-    uint16_t new_d = pow((m_red_last   - rgb_color[i][0])*0.30f, 2) +
-                      pow((m_green_last - rgb_color[i][1])*0.59f, 2) +
-                      pow((m_blue_last  - rgb_color[i][2])*0.11f, 2);
+    uint16_t new_d = pow((m_red_last   - colorIface::rgb_color[i][0])*0.30f, 2) +
+                     pow((m_green_last - colorIface::rgb_color[i][1])*0.59f, 2) +
+                     pow((m_blue_last  - colorIface::rgb_color[i][2])*0.11f, 2);
     if (d > new_d) {
       d = new_d;
       ret = (color_t)i;
@@ -136,32 +130,4 @@ void     TCS34725::write8(uint8_t reg, uint8_t val)
 {
   write8_cb(TCS34725_ADDRESS, TCS34725_COMMAND_BIT | reg, val);
 }
-
-const uint8_t TCS34725::rgb_color[COLOR_MAX][3] = {
-  {  0,   0,   0}, // BLACK
-  {255, 255, 255}, // WHITE
-  {255,   0,   0}, // RED
-  {  0, 255,   0}, // LIME
-  {  0,   0, 255}, // BLUE
-  {255, 255,   0}, // YELLOW
-  {  0, 255, 255}, // CYAN
-  {255,   0, 255}, // MAGENTA
-  {192, 192, 192}, // SILVER
-  {128, 128, 128}, // GRAY
-  {128,   0,   0}, // MAROON
-  {128, 128,   0}, // OLIVE
-  {  0, 128,   0}, // GREEN
-  {128,   0, 128}, // PURPLEz
-  {  0, 128, 128}, // TEAL
-  {  0,   0, 128}, // NAVY
-  {255,  69,   0}, // RED ORANGE
-};
-
-const char* TCS34725::rgb_string[COLOR_MAX+1] = {
-  "BLACK", "WHITE", "RED", "LIME", "BLUE", "YELLOW",
-  "CYAN", "MAGENTA", "SILVER", "GRAY", "MAROON", "OLIVE",
-  "GREEN", "PURPLE", "TEAL", "NAVY", "ORANGE",
-  "NO_COLOR"
-};
-
 
