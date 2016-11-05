@@ -74,7 +74,7 @@ void setup()
 void loop()
 {
   g_tcs34725.update_color_values();
-  Serial.println(TCS34725::rgb_string[g_tcs34725.get_color()]);
+  Serial.println(colorIface::rgb_string[g_tcs34725.get_color()]);
   delay(1000);
 }
 
