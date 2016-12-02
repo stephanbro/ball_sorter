@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <math.h>
-#include <Wire.h>
 #include "tcs34725_driver.hpp"
 
 #define TCS34725_ADDRESS     0x29
