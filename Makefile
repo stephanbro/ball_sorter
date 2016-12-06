@@ -19,10 +19,7 @@ CXXFLAGS = -std=c++11 -Wall -Werror
 SOURCES += $(wildcard src/drivers/*.cpp)
 SOURCES += $(wildcard src/modules/*.cpp)
 SOURCES += $(wildcard src/util/*.cpp)
-
-# Grab the test source files
-TEST_DIR = src/tests
-SOURCES  += $(wildcard $(TEST_DIR)/*.cpp)
+SOURCES += $(wildcard src/tests/*.cpp)
 
 OBJ_DIR   = build-tests
 OBJS      = $(SOURCES:.cpp=.o)
