@@ -6,31 +6,6 @@
 
 #define TCS34725_COMMAND_BIT 0x80
 
-#define TCS34725_RA_ENABLE   0x00 // Enables states and interrupts
-#define TCS34725_ENABLE_AIEN 0x10 // RGBC Interrupt enable
-#define TCS34725_ENABLE_WEN  0x08 // Wait enable - Writing 1 actives the wait timer
-#define TCS34725_ENABLE_AEN  0x02 // RGBC Enable - Writing 1 actives the ADC, 0 disables it
-#define TCS34725_ENABLE_PON  0x01 // Power on- Writing 1 activates the internal oscillator, 0 disables it
-
-#define TCS34725_RA_ATIME    0x01 // RGBC time
-#define TCS34725_RA_WTIME    0x03 // Wait time
-
-#define TCS34725_RA_CONFIG   0x0D // Configuration
-#define TCS34725_RA_CONTROL  0x0F // Control
-
-#define TCS34725_RA_WIA      0x12 // Who Am I/ID
-#define TCS34725_WIA_VAL     0x44 // Who Am I/ID value
-
-#define TCS34725_RA_CDATAL   0x14 // Clear channel data low
-#define TCS34725_RA_CDATAH   0x15 // Clear channel data high
-#define TCS34725_RA_RDATAL   0x16 // Red channel data low
-#define TCS34725_RA_RDATAH   0x17 // Red channel data high
-#define TCS34725_RA_GDATAL   0x18 // Green channel data low
-#define TCS34725_RA_GDATAH   0x19 // Green channel data high
-#define TCS34725_RA_BDATAL   0x1A // Blue channel data low
-#define TCS34725_RA_BDATAH   0x1B // Blue channel data high
-
-
 TCS34725::TCS34725(uint8_t (*read8_in)(uint8_t, uint8_t),
     uint16_t (*read16_in)(uint8_t, uint8_t),
     void (*write8_in)(uint8_t, uint8_t, uint8_t)) :
