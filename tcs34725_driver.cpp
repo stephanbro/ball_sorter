@@ -31,7 +31,10 @@
 #define TCS34725_RA_BDATAH   0x1B // Blue channel data high
 
 
-TCS34725::TCS34725() :
+TCS34725::TCS34725(uint8_t (*read8_in)(uint8_t, uint8_t),
+    uint16_t (*read16_in)(uint8_t, uint8_t),
+    void (*write8_in)(uint8_t, uint8_t, uint8_t)) :
+  colorIface(read8_in, read16_in, write8_in),
   m_is_inited(false),
   m_red_last(0),
   m_green_last(0),

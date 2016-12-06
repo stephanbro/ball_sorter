@@ -4,7 +4,10 @@
 class TCS34725 : public colorIface
 {
   public:
-    TCS34725();  // Constructor
+    // Constructor
+    TCS34725(uint8_t (*read8_in)(uint8_t, uint8_t),
+      uint16_t (*read16_in)(uint8_t, uint8_t),
+      void (*write8_in)(uint8_t, uint8_t, uint8_t));
     ~TCS34725(); // Destructor
 
     virtual void init(void);
@@ -19,10 +22,6 @@ class TCS34725 : public colorIface
 
     static const uint8_t rgb_color[COLOR_MAX][3];
     static const char* rgb_string[COLOR_MAX+1];
-
-    uint8_t  (*read8_cb)(uint8_t, uint8_t);
-    uint16_t (*read16_cb)(uint8_t, uint8_t);
-    void     (*write8_cb)(uint8_t, uint8_t, uint8_t);
 
   private:
     uint8_t  read8(uint8_t reg);
