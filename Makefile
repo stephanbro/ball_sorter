@@ -16,7 +16,7 @@ CFLAGS   = -std=gnu11
 CXXFLAGS = -std=c++11 -Wall -Werror
 
 # Grab all sources
-SOURCES += $(wildcard *.cpp)
+SOURCES += $(wildcard src/drivers/*.cpp)
 SOURCES += $(wildcard src/modules/*.cpp)
 SOURCES += $(wildcard src/util/*.cpp)
 
