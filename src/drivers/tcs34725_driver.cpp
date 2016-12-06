@@ -45,14 +45,14 @@ TCS34725::TCS34725(uint8_t (*read8_in)(uint8_t, uint8_t),
 
 TCS34725::~TCS34725() { }
 
-void TCS34725::init(void)
+bool TCS34725::init(void)
 {
   if (m_is_inited == true) {
-    return;
+    return true;
   }
   uint8_t val = read8(TCS34725_RA_WIA);
   m_is_inited = (val == 0x44);
-  enable();
+  return m_is_inited;
 }
 
 void TCS34725::enable(void)
@@ -85,15 +85,10 @@ void TCS34725::update_color_values(void)
   uint16_t blu = read16(TCS34725_RA_BDATAL);
   uint16_t grn = read16(TCS34725_RA_GDATAL);
 
-  // Set color max
-  m_rgb_max = red;
-  if (m_rgb_max < blu) {
-    m_rgb_max = blu;
-  }
-  if (m_rgb_max < grn) {
-    m_rgb_max = grn;
-  }
+  // Get color magnitude
+  m_rgb_max = sqrt(pow(red, 2) + pow(blu, 2) + pow(grn, 2));
 
+  // Normalize rgb values
   m_red_last   = (uint8_t)(((float)red / (float)m_rgb_max)*255);
   m_blue_last  = (uint8_t)(((float)blu / (float)m_rgb_max)*255);
   m_green_last = (uint8_t)(((float)grn / (float)m_rgb_max)*255);
@@ -106,10 +101,15 @@ TCS34725::color_t TCS34725::get_color(void)
   }
 
   color_t ret = COLOR_MAX;
-  uint16_t d  = 65535;
+  uint16_t d  = UINT16_MAX;
+  // Iterate through each color to find which one is the closest
+  // to what is currently being seen. Adjustment multipliers are
+  // for more closley matching how the human eye sees them.
+  // http://stackoverflow.com/questions/1847092/given-an-rgb-value-what-would-be-the-best-way-to-find-the-closest-match-in-the-d
+
   for (uint8_t i = 0; i < COLOR_MAX; i++) {
-    uint16_t new_d = pow((m_red_last   - colorIface::rgb_color[i][0])*0.30f, 2) +
-                     pow((m_green_last - colorIface::rgb_color[i][1])*0.59f, 2) +
+    uint16_t new_d = pow((m_red_last   - colorIface::rgb_color[i][0])*0.30f, 2)+
+                     pow((m_green_last - colorIface::rgb_color[i][1])*0.59f, 2)+
                      pow((m_blue_last  - colorIface::rgb_color[i][2])*0.11f, 2);
     if (d > new_d) {
       d = new_d;
