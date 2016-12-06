@@ -26,7 +26,7 @@ OBJS      = $(SOURCES:.cpp=.o)
 OBJ_FILES = $(notdir $(OBJS))
 OBJ_OUT   = $(foreach o,$(OBJ_FILES),$(OBJ_DIR)/$(o))
 
-INCLUDE_DIRS = src src/modules src/util
+INCLUDE_DIRS = src src/modules src/util vendor/catch/include
 VPATH     = $(INCLUDE_DIRS)
 VPATH    += $(OBJ_DIR)
 
