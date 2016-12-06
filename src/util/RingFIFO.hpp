@@ -1,4 +1,7 @@
 
+#ifndef _RINGFIFO_HPP_
+#define _RINGFIFO_HPP_
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -23,4 +26,6 @@ class RingFIFO
     uint8_t m_head;
     uint8_t m_tail;
 };
+
+#endif /* _RINGFIFO_HPP_ */
 

@@ -1,3 +1,7 @@
+
+#ifndef _TCS34725_DRIVER_HPP_
+#define _TCS34725_DRIVER_HPP_
+
 #include "color_iface.hpp"
 
 // Sensor class
@@ -38,4 +42,6 @@ class TCS34725 : public colorIface
     uint16_t m_clear_last;
     uint16_t m_rgb_max;
 };
+
+#endif /* _TCS34725_DRIVER_HPP_ */
 

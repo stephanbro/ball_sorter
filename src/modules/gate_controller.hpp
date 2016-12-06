@@ -1,4 +1,7 @@
 
+#ifndef _GATE_CONTROLLER_HPP_
+#define _GATE_CONTROLLER_HPP_
+
 #include <stdint.h>
 #include <functional>
 
@@ -21,3 +24,6 @@ class GateController
 
     uint8_t gate_buffer[SLOT_MAX];
 };
+
+#endif /* _GATE_CONTROLLER_HPP_ */
+
