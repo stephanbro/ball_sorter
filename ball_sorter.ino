@@ -8,9 +8,14 @@
 // Arduino includes
 #include <Wire.h>
 
-#include "tcs34725_driver.hpp"
+#include "drivers/color_iface.hpp"
+#include "drivers/tcs34725_driver.hpp"
+#include "modules/gate_controller.hpp"
 
-static TCS34725 g_tcs34725;
+// These are pointers because there is no obvious
+// access to constructors in arduino
+static colorIface* g_color_sensor;
+static GateController* g_gate_controller;
 
 void i2c_read(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data)
 {
@@ -56,6 +61,14 @@ void    i2c_write8( uint8_t address, uint8_t reg, uint8_t data)
   i2c_write(address, reg, 1, (uint8_t*)&data);
 }
 
+void init_failed(void)
+{
+  while (true) {
+    Serial.println("Init failed!\n");
+    delay(1000);
+  }
+}
+
 void setup()
 {
   // Setup I2C
@@ -63,18 +76,23 @@ void setup()
 
   // Setup debug console over usb
   Serial.begin(115200);
-  g_tcs34725.read8_cb  = i2c_read8;
-  g_tcs34725.read16_cb = i2c_read16;
-  g_tcs34725.write8_cb = i2c_write8;
-  g_tcs34725.init();
-  g_tcs34725.enable();
+
+  // Setup color sensor
+  g_color_sensor = new TCS34725(i2c_read8, i2c_read16, i2c_write8);
+  if (g_color_sensor->init() == false) {
+    init_failed();
+  }
+  g_color_sensor->enable();
+
+  g_gate_controller = new GateController(digitalWrite);
 
 }
 
 void loop()
 {
-  g_tcs34725.update_color_values();
-  Serial.println(colorIface::rgb_string[g_tcs34725.get_color()]);
-  delay(1000);
+  const char* color = colorIface::rgb_string[g_color_sensor->get_color()];
+  Serial.println(color);
+  g_gate_controller->tick(GateController::SLOT1);
+  delay(200);
 }
 
