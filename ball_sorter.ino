@@ -17,6 +17,26 @@
 static colorIface* g_color_sensor;
 static GateController* g_gate_controller;
 
+static const GateController::gates_t color_to_gate[colorIface::COLOR_MAX] = {
+  GateController::GATE_MAX, // Black
+  GateController::GATE_MAX, // White
+  GateController::GATE_MAX, // Red
+  GateController::GATE1,    // Lime
+  GateController::GATE4,    // Blue
+  GateController::GATE2,    // Yellow
+  GateController::GATE_MAX, // Cyan
+  GateController::GATE_MAX, // Magenta
+  GateController::GATE_MAX, // Silver
+  GateController::GATE_MAX, // Gray
+  GateController::GATE_MAX, // Maroon
+  GateController::GATE_MAX, // Olive
+  GateController::GATE_MAX, // Green
+  GateController::GATE_MAX, // Purple
+  GateController::GATE_MAX, // Teal
+  GateController::GATE_MAX, // Navy
+  GateController::GATE3,    // Orange
+};
+
 void i2c_read(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data)
 {
   // Set register to read from
@@ -90,9 +110,9 @@ void setup()
 
 void loop()
 {
-  const char* color = colorIface::rgb_string[g_color_sensor->get_color()];
-  Serial.println(color);
-  g_gate_controller->tick(GateController::SLOT1);
+  colorIface::color_t color = g_color_sensor->get_color();
+  Serial.println(colorIface::rgb_string[color]);
+  g_gate_controller->tick(color_to_gate[color]);
   delay(200);
 }
 
