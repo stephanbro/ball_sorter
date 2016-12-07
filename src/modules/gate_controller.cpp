@@ -2,7 +2,8 @@
 #include "gate_controller.hpp"
 #include <string.h>
 
-GateController::GateController()
+GateController::GateController(void (*gate_toggle_in)(uint8_t, uint8_t)) :
+  gate_toggle(gate_toggle_in)
 {
   for (uint8_t i = 0; i < SLOT_MAX; i++) {
     gate_buffer[i] = SLOT_MAX;

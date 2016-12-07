@@ -3,12 +3,11 @@
 #define _GATE_CONTROLLER_HPP_
 
 #include <stdint.h>
-#include <functional>
 
 class GateController
 {
   public:
-    GateController();
+    GateController(void (*gate_toggle_in)(uint8_t, uint8_t));
     virtual ~GateController() {}
 
     enum slot_t {
@@ -17,9 +16,9 @@ class GateController
 
     void tick(slot_t new_dest);
 
-    std::function<void(uint8_t, bool)> gate_toggle;
-
   private:
+    void (*gate_toggle)(uint8_t, uint8_t);
+
     void shift_buffer(slot_t new_dest);
 
     uint8_t gate_buffer[SLOT_MAX];
