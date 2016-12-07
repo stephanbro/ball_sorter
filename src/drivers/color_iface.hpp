@@ -19,7 +19,7 @@ class colorIface
 
     typedef enum COLOR {
       BLACK, WHITE, RED, LIME, BLUE, YELLOW,
-      CYAN, MAGENTA, SILVER, GRAY, MAROON, OLIIVE,
+      CYAN, MAGENTA, SILVER, GRAY, MAROON, OLIVE,
       GREEN, PURPLE, TEAL, NAVY, ORANGE,
       COLOR_MAX
     } color_t;
