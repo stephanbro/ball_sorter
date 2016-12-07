@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "gate_controller.hpp"
 
-void gate_toggle_cb(uint8_t i, bool j)
+void gate_toggle_cb(uint8_t i, uint8_t j)
 {
   printf("%d ", j);
   //if (j == true) {
@@ -13,8 +13,7 @@ void gate_toggle_cb(uint8_t i, bool j)
 
 TEST_CASE( "Controller callbacks work", "[GateController]" )
 {
-  GateController controller;
-  controller.gate_toggle = gate_toggle_cb;
+  GateController controller(gate_toggle_cb);
 
   printf("\n\nCalling tick 1\n");
   controller.tick(GateController::SLOT2);
