@@ -16,18 +16,18 @@ TEST_CASE( "Controller callbacks work", "[GateController]" )
   GateController controller(gate_toggle_cb);
 
   printf("\n\nCalling tick 1\n");
-  controller.tick(GateController::SLOT2);
+  controller.tick(GateController::GATE2);
   printf("\n\nCalling tick 2\n");
-  controller.tick(GateController::SLOT3);
+  controller.tick(GateController::GATE3);
   printf("\n\nCalling tick 3\n");
-  controller.tick(GateController::SLOT1);
+  controller.tick(GateController::GATE1);
   printf("\n\nCalling tick 4\n");
-  controller.tick(GateController::SLOT2);
+  controller.tick(GateController::GATE2);
   printf("\n\n");
-  controller.tick(GateController::SLOT_MAX);
+  controller.tick(GateController::GATE_MAX);
   printf("\n\n");
-  controller.tick(GateController::SLOT_MAX);
+  controller.tick(GateController::GATE_MAX);
   printf("\n\n");
-  controller.tick(GateController::SLOT_MAX);
+  controller.tick(GateController::GATE_MAX);
   printf("\n\n");
 }
