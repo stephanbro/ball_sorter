@@ -3,6 +3,9 @@
 #define _GATE_CONTROLLER_HPP_
 
 #include <stdint.h>
+#include <stdbool.h>
+
+#include "../util/RingFIFO.hpp"
 
 class GateController
 {
@@ -11,21 +14,32 @@ class GateController
     virtual ~GateController() {}
 
     enum gates_t {
-      GATE_SENSING, GATE1, GATE2, GATE3, GATE4, GATE_MAX,
+      GATE_SENSING = 0,
+      GATE1        = 1,
+      GATE2        = 2,
+      GATE3        = 3,
+      GATE4        = 4,
+      GATE_MAX     = 5,
     };
 
     enum gate_state_t {
-      OPEN = 0, CLOSE = 1
+      OPEN  = 0,
+      CLOSE = 1,
     };
 
     void tick(gates_t new_dest);
+    void set_ticks_between_gate(gates_t gate, uint8_t ticks);
 
   private:
     void (*gate_toggle)(uint8_t, uint8_t);
 
-    void shift_buffer(gates_t new_dest);
+    void gate_sensing_handler(gates_t new_dest);
 
-    uint8_t gate_buffer[GATE_MAX];
+    uint8_t m_ticks_between_gate[GATE_MAX];
+    uint8_t m_tick_count[GATE_MAX];
+    bool m_close_gate_sensing;
+
+    RingFIFO m_gate_queue[GATE_MAX];
 };
 
 #endif /* _GATE_CONTROLLER_HPP_ */

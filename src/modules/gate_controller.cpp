@@ -3,42 +3,61 @@
 #include <string.h>
 
 GateController::GateController(void (*gate_toggle_in)(uint8_t, uint8_t)) :
-  gate_toggle(gate_toggle_in)
+  gate_toggle(gate_toggle_in),
+  m_ticks_between_gate{20, 20, 20, 20, 20},
+  m_tick_count{},
+  m_close_gate_sensing(true)
 {
-  for (uint8_t i = 0; i < GATE_MAX; i++) {
-    gate_buffer[i] = GATE_MAX;
-  }
 }
 
 void GateController::tick(gates_t new_dest)
 {
-  bool gates_val[GATE_MAX] = {};
-  // Check if we sensed something new
-  if (new_dest != GATE_MAX) {
-    gates_val[GATE_SENSING] = OPEN;
-    // TODO: An interrupt needs to trigger to close
-    // this gate after a certain amount of time
-  }
-  // Check each slot to update it's state
-  for (uint8_t i = GATE1; i < GATE_MAX; i++) {
-    if (gate_buffer[i] == i) {
-      gates_val[i] = CLOSE;
-      gate_buffer[i] = GATE_MAX;
-    } else {
-      gates_val[i] = OPEN;
-    }
-  }
   for (uint8_t i = 0; i < GATE_MAX; i++) {
-    gate_toggle(i, gates_val[i]);
+    // Skip this gate if the tick count hasn't been met
+    if (++(m_tick_count[i]) < m_ticks_between_gate[i]) {
+      continue;
+    }
+    m_tick_count[i] = 0;
+    // Special handling for the sensing gate
+    if (i == GATE_SENSING) {
+      gate_sensing_handler(new_dest);
+      continue;
+    }
+    // Get the destination from the previous gate's queue
+    gates_t dest = (gates_t)m_gate_queue[i-1].pop();
+    gate_state_t output = OPEN;
+    // Close the gate if the front of the queue has this gate
+    // as it's destination or the queue is empty
+    if (dest == i || dest == RingFIFO::empty) {
+      output = CLOSE;
+    // Push the destination on the next queue
+    } else {
+      m_gate_queue[i].push(dest);
+    }
+    gate_toggle(i, output);
   }
-  //TODO: This buffer should not be shifted every tick most likely
-  shift_buffer(new_dest);
 }
 
-void GateController::shift_buffer(gates_t new_dest)
+void GateController::gate_sensing_handler(gates_t new_dest)
 {
-  // Add the newest number to the beginning of the buffer
-  gate_buffer[GATE_SENSING] = new_dest;
-  // Shift the buffer along
-  memmove(&(gate_buffer[GATE1]), &(gate_buffer[GATE_SENSING]), sizeof(uint8_t)*(GATE_MAX-1));
+  // Is there a signal from last tick to close the gate?
+  if (m_close_gate_sensing == true) {
+    m_close_gate_sensing = false;
+    gate_toggle(GATE_SENSING, CLOSE);
+  }
+  // Is there something new?
+  else if (new_dest != GATE_MAX) {
+    m_close_gate_sensing = true;
+    m_gate_queue[GATE_SENSING].push(new_dest);
+    gate_toggle(GATE_SENSING, OPEN);
+  }
 }
+
+void GateController::set_ticks_between_gate(gates_t gate, uint8_t ticks)
+{
+  if (gate >= GATE_MAX) {
+    return;
+  }
+  m_ticks_between_gate[gate] = ticks;
+}
+
