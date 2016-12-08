@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include "gate_controller.hpp"
 
+#include <vector>
+
 static GateController::gate_state_t gate_state[GateController::GATE_MAX] = {};
 
 void gate_toggle_cb(uint8_t gate, uint8_t state)
@@ -10,7 +12,7 @@ void gate_toggle_cb(uint8_t gate, uint8_t state)
   gate_state[gate] = (GateController::gate_state_t)(state);
 }
 
-TEST_CASE( "Controller callbacks work", "[GateController]" )
+TEST_CASE( "Sensing gate toggles", "[GateController]" )
 {
   GateController controller(gate_toggle_cb);
 
@@ -18,19 +20,36 @@ TEST_CASE( "Controller callbacks work", "[GateController]" )
     controller.set_ticks_between_gate((GateController::gates_t)i, 0);
   }
 
-  printf("\n\nCalling tick 1\n");
-  controller.tick(GateController::GATE2);
-  printf("\n\nCalling tick 2\n");
-  controller.tick(GateController::GATE3);
-  printf("\n\nCalling tick 3\n");
-  controller.tick(GateController::GATE1);
-  printf("\n\nCalling tick 4\n");
-  controller.tick(GateController::GATE2);
-  printf("\n\n");
-  controller.tick(GateController::GATE_MAX);
-  printf("\n\n");
-  controller.tick(GateController::GATE_MAX);
-  printf("\n\n");
-  controller.tick(GateController::GATE_MAX);
-  printf("\n\n");
+  std::vector<GateController::gates_t> input = {
+    GateController::GATE1,
+    GateController::GATE1,
+    GateController::GATE1,
+    GateController::GATE_MAX,
+    GateController::GATE_MAX,
+    GateController::GATE1,
+  };
+
+  std::vector<GateController::gate_state_t> sensing_output = {
+    GateController::CLOSE,
+    GateController::OPEN,
+    GateController::CLOSE,
+    GateController::CLOSE,
+    GateController::CLOSE,
+    GateController::OPEN,
+  };
+
+  std::vector<GateController::gate_state_t> slot1_output = {
+    GateController::CLOSE,
+    GateController::CLOSE,
+    GateController::CLOSE,
+    GateController::CLOSE,
+    GateController::CLOSE,
+    GateController::CLOSE,
+  };
+
+  for (uint8_t i = 0; i < 6; i++) {
+    controller.tick(input[i]);
+    REQUIRE(gate_state[GateController::GATE_SENSING] == sensing_output[i]);
+    REQUIRE(gate_state[GateController::GATE1] == slot1_output[i]);
+  }
 }
