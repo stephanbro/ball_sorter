@@ -8,15 +8,17 @@
 // Arduino includes
 #include <Wire.h>
 
+// Drivers and Modules
 #include "drivers/color_iface.hpp"
 #include "drivers/tcs34725_driver.hpp"
 #include "modules/gate_controller.hpp"
 
 // These are pointers because there is no obvious
-// access to constructors in arduino
+// way to pass constructor arguments in arduino
 static colorIface* g_color_sensor;
 static GateController* g_gate_controller;
 
+// Convert from color to gate number, GATE_MAX means not handled
 static const GateController::gates_t color_to_gate[colorIface::COLOR_MAX] = {
   GateController::GATE_MAX, // Black
   GateController::GATE_MAX, // White
@@ -37,7 +39,9 @@ static const GateController::gates_t color_to_gate[colorIface::COLOR_MAX] = {
   GateController::GATE3,    // Orange
 };
 
-void i2c_read(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data)
+// I2C handling code
+// TODO: Move to a HAL?
+static void i2c_read(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data)
 {
   // Set register to read from
   Wire.beginTransmission(address);
@@ -51,7 +55,7 @@ void i2c_read(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data)
   }
 }
 
-void i2c_write(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data)
+static void i2c_write(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data)
 {
   // Set register to write to
   Wire.beginTransmission(address);
@@ -62,26 +66,26 @@ void i2c_write(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data)
   Wire.endTransmission();
 }
 
-uint8_t  i2c_read8( uint8_t address, uint8_t reg)
+static uint8_t  i2c_read8( uint8_t address, uint8_t reg)
 {
   uint8_t data = 0;
   i2c_read(address, reg, 1, &data);
   return data;
 }
 
-uint16_t i2c_read16(uint8_t address, uint8_t reg)
+static uint16_t i2c_read16(uint8_t address, uint8_t reg)
 {
   uint8_t data[2] = {};
   i2c_read(address, reg, 2, (uint8_t*)&data);
   return (uint16_t)(data[1] << 8) | (data[0]);
 }
 
-void    i2c_write8( uint8_t address, uint8_t reg, uint8_t data)
+static void    i2c_write8( uint8_t address, uint8_t reg, uint8_t data)
 {
   i2c_write(address, reg, 1, (uint8_t*)&data);
 }
 
-void init_failed(void)
+static void init_failed(void)
 {
   while (true) {
     Serial.println("Init failed!\n");
