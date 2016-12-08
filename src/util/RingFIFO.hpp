@@ -8,6 +8,7 @@
 class RingFIFO
 {
   public:
+    RingFIFO();
     RingFIFO(uint8_t size);
     virtual ~RingFIFO() { }
 
@@ -16,9 +17,12 @@ class RingFIFO
 
     uint8_t get_size(void);
     uint8_t get(uint8_t index);
+    uint8_t front(void);
 
     uint8_t pop(void);
     void push(uint8_t val);
+
+    static const uint8_t empty;
 
   private:
     uint8_t m_buffer[UINT8_MAX+1];
