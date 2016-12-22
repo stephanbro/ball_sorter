@@ -44,11 +44,6 @@ MV    = mv
 $(OBJ_DIR)/%.d: ;
 .PRECIOUS: $(OBJ_DIR)/$(notdir %.d)
 
-all: $(EXEC)
-
-clean:
-	@$(RM) $(OBJ_DIR)
-
 $(EXEC): $(OBJS)
 	$(CXX) $(OBJ_OUT) -o $(EXEC)
 
