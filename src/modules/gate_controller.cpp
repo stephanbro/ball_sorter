@@ -12,7 +12,9 @@ GateController::GateController(void (*gate_toggle_in)(uint8_t, uint8_t)) :
 
 void GateController::tick(gates_t new_dest)
 {
-  for (uint8_t i = 0; i < GATE_MAX; i++) {
+  // Iterate in reverse order to prevent a destination
+  // from moving to the end in a single tick
+  for (int16_t i = GATE_MAX-1; i >= 0; i--) {
     // Skip this gate if the tick count hasn't been met
     if (++(m_tick_count[i]) < m_ticks_between_gate[i]) {
       continue;
@@ -28,7 +30,7 @@ void GateController::tick(gates_t new_dest)
     gate_state_t output = OPEN;
     // Close the gate if the front of the queue has this gate
     // as it's destination or the queue is empty
-    if (dest == i || dest == RingFIFO::empty) {
+    if (dest == i || dest == RingFIFO::EMPTY) {
       output = CLOSE;
     // Push the destination on the next queue
     } else {
@@ -46,7 +48,7 @@ void GateController::gate_sensing_handler(gates_t new_dest)
     gate_toggle(GATE_SENSING, CLOSE);
   }
   // Is there something new?
-  else if (new_dest != GATE_MAX) {
+  else if (new_dest < GATE_MAX) {
     m_close_gate_sensing = true;
     m_gate_queue[GATE_SENSING].push(new_dest);
     gate_toggle(GATE_SENSING, OPEN);
