@@ -22,11 +22,11 @@ class RingFIFO
     uint8_t pop(void);
     void push(uint8_t val);
 
-    static const uint8_t empty;
+    static const uint8_t EMPTY;
 
   private:
     uint8_t m_buffer[UINT8_MAX+1];
-    const uint8_t m_size;
+    const uint16_t m_size;
     uint8_t m_head;
     uint8_t m_tail;
 };
