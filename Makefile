@@ -2,7 +2,7 @@
 #SHELL := /bin/bash
 #PATH := /usr/local/bin:$(PATH)
 
-ifeq ($(MAKECMDGOALS),$(filter $(MAKECMDGOALS),tests clean))
+ifneq (,$(filter tests clean, $(MAKECMDGOALS)))
 include tests.mk
 endif
 
