@@ -3,3 +3,4 @@ cscope.out
 
 compile_commands.json
 build-*/
+.pioenvs/*

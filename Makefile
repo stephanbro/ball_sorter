@@ -1,20 +1,29 @@
+# Uncomment lines below if you have problems with $PATH
+#SHELL := /bin/bash
+#PATH := /usr/local/bin:$(PATH)
 
-# Arduino makefile defines
-ARDUINO_DIR = /usr/share/arduino
-ARDUINO_MK := /usr/share/arduino
-MONITOR_PORT := /dev/ttyACM0
-MONITOR_CMD = picocom
-BOARD_TAG := uno
-USER_LIB_PATH := ../
-
-CFLAGS_STD = -std=c11
-CXXFLAGS_STD = -std=c++11
-
-ARDUINO_LIBS += Wire ball_sorter
-
-ifeq ($(TESTS),)
-# Does the building for arduino
-    include $(ARDUINO_MK)/Arduino.mk
-else
-    include tests.mk
+ifeq ($(MAKECMDGOALS),$(filter $(MAKECMDGOALS),tests clean))
+include tests.mk
 endif
+
+all:
+	platformio -f -c vim run
+
+upload:
+	platformio -f -c vim run --target upload
+
+clean:
+	platformio -f -c vim run --target clean
+	@$(RM) $(OBJ_DIR)
+
+program:
+	platformio -f -c vim run --target program
+
+uploadfs:
+	platformio -f -c vim run --target uploadfs
+
+update:
+	platformio -f -c vim update
+
+tests: $(EXEC)
+
