@@ -5,7 +5,7 @@ const uint8_t RingFIFO::EMPTY = UINT8_MAX;
 
 RingFIFO::RingFIFO() :
   m_buffer{},
-  m_size(UINT8_MAX),
+  m_size(5),
   m_head(0),
   m_tail(0)
 {

@@ -25,7 +25,7 @@ class RingFIFO
     static const uint8_t EMPTY;
 
   private:
-    uint8_t m_buffer[UINT8_MAX+1];
+    uint8_t m_buffer[6];
     const uint16_t m_size;
     uint8_t m_head;
     uint8_t m_tail;
