@@ -23,8 +23,9 @@ class GateController
     };
 
     enum gate_state_t {
-      OPEN  = 0,
-      CLOSE = 1,
+      OPEN  = 1,
+      CLOSE = 0,
+      STATES = 2,
     };
 
     void tick(gates_t new_dest);
@@ -35,7 +36,8 @@ class GateController
 
     void gate_sensing_handler(gates_t new_dest);
 
-    uint8_t m_ticks_between_gate[GATE_MAX];
+    uint8_t m_ticks_between_gate[STATES][GATE_MAX];
+    gate_state_t m_output[GATE_MAX];
     uint8_t m_tick_count[GATE_MAX];
     bool m_close_gate_sensing;
 
