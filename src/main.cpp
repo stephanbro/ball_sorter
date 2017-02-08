@@ -1,4 +1,4 @@
-#include "Arduino.h"
+#include <Arduino.h>
 
 // Standard includes
 #include <stdint.h>
@@ -24,12 +24,12 @@ static const GateController::gates_t color_to_gate[colorIface::COLOR_MAX] = {
   GateController::GATE_MAX, // Black
   GateController::GATE_MAX, // White
   GateController::GATE_MAX, // Red
-  GateController::GATE1,    // Lime
-  GateController::GATE4,    // Blue
-  GateController::GATE2,    // Yellow
+  GateController::GATE3,    // Lime
+  GateController::GATE_MAX, // Blue
+  GateController::GATE1,    // Yellow
   GateController::GATE_MAX, // Cyan
   GateController::GATE_MAX, // Magenta
-  GateController::GATE_MAX, // Silver
+  GateController::GATE1, // Silver
   GateController::GATE_MAX, // Gray
   GateController::GATE_MAX, // Maroon
   GateController::GATE_MAX, // Olive
@@ -37,8 +37,16 @@ static const GateController::gates_t color_to_gate[colorIface::COLOR_MAX] = {
   GateController::GATE_MAX, // Purple
   GateController::GATE_MAX, // Teal
   GateController::GATE_MAX, // Navy
-  GateController::GATE3,    // Orange
+  GateController::GATE2,    // Orange
 };
+
+static void i2c_read(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data);
+static void i2c_write(uint8_t address, uint8_t reg, uint8_t len, uint8_t* data);
+static uint8_t  i2c_read8( uint8_t address, uint8_t reg);
+static uint16_t i2c_read16(uint8_t address, uint8_t reg);
+static void    i2c_write8( uint8_t address, uint8_t reg, uint8_t data);
+static void init_failed(void);
+static void gate_out(uint8_t pin, uint8_t output);
 
 // I2C handling code
 // TODO: Move to a HAL?
@@ -89,9 +97,14 @@ static void    i2c_write8( uint8_t address, uint8_t reg, uint8_t data)
 static void init_failed(void)
 {
   while (true) {
-    Serial.println("Init failed!\n");
+    Serial.println("Init failed!");
     delay(1000);
   }
+}
+
+static void gate_out(uint8_t pin, uint8_t output)
+{
+  digitalWrite(pin+4, output);
 }
 
 void setup()
@@ -104,13 +117,17 @@ void setup()
 
   // Setup color sensor
   g_color_sensor = new TCS34725(i2c_read8, i2c_read16, i2c_write8);
-  if (g_color_sensor->init() == false) {
-    init_failed();
+  if (g_color_sensor == nullptr || g_color_sensor->init() == false) {
+      init_failed();
+  } else {
+    g_color_sensor->enable();
   }
-  g_color_sensor->enable();
 
-  g_gate_controller = new GateController(digitalWrite);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
 
+  g_gate_controller = new GateController(gate_out);
 }
 
 void loop()
@@ -118,6 +135,6 @@ void loop()
   colorIface::color_t color = g_color_sensor->get_color();
   Serial.println(colorIface::rgb_string[color]);
   g_gate_controller->tick(color_to_gate[color]);
-  delay(200);
+  delay(50);
 }
 
