@@ -72,7 +72,8 @@ void TCS34725::update_color_values(void)
 TCS34725::color_t TCS34725::get_color(void)
 {
   update_color_values();
-  if (m_clear_last < 2000) {
+  // TODO: Make this configurable
+  if (m_clear_last < 5000) {
     return COLOR_MAX;
   }
 
