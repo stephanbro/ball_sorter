@@ -13,7 +13,7 @@ class GateController
     GateController(void (*gate_toggle_in)(uint8_t, uint8_t));
     virtual ~GateController() {}
 
-    enum gates_t {
+    enum gates_t : unsigned {
       GATE_SENSING = 0,
       GATE1        = 1,
       GATE2        = 2,
@@ -22,26 +22,27 @@ class GateController
       GATE_MAX     = 5,
     };
 
-    enum gate_state_t {
+    enum gate_state_t : unsigned {
       OPEN  = 1,
       CLOSE = 0,
       STATES = 2,
     };
 
     void tick(gates_t new_dest);
-    void set_ticks_between_gate(gates_t gate, uint8_t ticks);
+    void set_ticks_between_gate(gates_t gate, gate_state_t state, uint16_t ticks);
 
   private:
     void (*gate_toggle)(uint8_t, uint8_t);
 
+    struct gate_info_s {
+      uint16_t gate_timer[STATES];
+      gate_state_t last_output;
+      uint16_t wait_count;
+      RingFIFO exit_queue;
+    };
+    gate_info_s m_gates[GATE_MAX];
+
     void gate_sensing_handler(gates_t new_dest);
-
-    uint8_t m_ticks_between_gate[STATES][GATE_MAX];
-    gate_state_t m_output[GATE_MAX];
-    uint8_t m_tick_count[GATE_MAX];
-    bool m_close_gate_sensing;
-
-    RingFIFO m_gate_queue[GATE_MAX];
 };
 
 #endif /* _GATE_CONTROLLER_HPP_ */
