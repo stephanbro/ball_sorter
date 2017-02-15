@@ -1,22 +1,24 @@
 
 #include "RingFIFO.hpp"
 
-const uint8_t RingFIFO::EMPTY = UINT8_MAX;
-
-RingFIFO::RingFIFO() :
-  m_buffer{},
-  m_size(5),
-  m_head(0),
-  m_tail(0)
-{
-}
+constexpr uint8_t RingFIFO::EMPTY;
 
 RingFIFO::RingFIFO(uint8_t size) :
-  m_buffer{},
+  m_buffer(nullptr),
   m_size(size+1),
   m_head(0),
   m_tail(0)
 {
+  // Handle if size has rolled over
+  if (size == UINT8_MAX) {
+    m_size = UINT8_MAX;
+  }
+  m_buffer = new uint8_t[m_size];
+}
+
+RingFIFO::~RingFIFO()
+{
+  delete[] m_buffer;
 }
 
 bool RingFIFO::is_empty(void)
@@ -34,7 +36,7 @@ uint8_t RingFIFO::get_size(void)
   if (m_tail >= m_head) {
     return m_tail - m_head;
   } else {
-    return (uint16_t)(m_tail + m_size) - m_head;
+    return (m_size - m_head) + m_tail;
   }
 }
 
@@ -70,6 +72,7 @@ void RingFIFO::push(uint8_t val)
   if (is_full() == true || val == EMPTY) {
     return;
   }
-  m_tail = (m_tail + 1) % m_size;
-  m_buffer[m_tail] = val;
+  uint8_t index = (m_tail + 1) % m_size;
+  m_buffer[index] = val;
+  m_tail = index;
 }
